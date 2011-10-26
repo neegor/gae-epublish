@@ -1,0 +1,18 @@
+.landscape {
+  display: none;
+}
+
+div#background {
+  width: 422px;
+}
+
+div#container {
+  width: 422px;
+  -webkit-transform: scale(1.5) translate(-10%,-10%);
+/*  -webkit-transform-origin: -25% -25%; */
+}
+
+/*
+  -webkit-transform: scale(1.5);
+  -webkit-transform-origin: 0 0;
+} */

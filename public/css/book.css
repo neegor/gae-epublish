@@ -1,0 +1,249 @@
+body {
+	padding: 0;
+	margin: 0;
+	overflow: hidden;
+	background-color: #eae6e0;
+}
+
+a {
+	text-decoration: none;
+}
+
+div#container {
+	width: 912px; /* (page.width * 2) */
+	height: 656px; /* page.height + 20 */
+	display: none;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	border: 0;
+	padding: 0;
+	/*  -webkit-box-shadow: 2px 0 2px #000; */
+}
+
+div#backgroundDiv {
+	width: 952px;
+	height: 686px;
+	margin: auto;
+	position: absolute;
+	top: 50%;
+	bottom: 50%;
+	left: 0;
+	right: 0;
+	z-index: -1;
+	text-align: center;
+	
+}
+
+div#background canvas {
+	margin: auto;
+}
+
+div.page {
+	float: left;
+	margin: 0;
+}
+
+div#leftpage { /* this is a hack. the positioning needs work. */
+	margin-left: 1.25em;
+	/*  background-image: -webkit-gradient(linear, right top, left top, from(rgb(239, 235, 230)), color-stop(0.05, rgb(250, 246, 240))); */
+}
+
+div#rightpage {
+	/* this is a hack tied to the above left-page hack. the positioning needs work. */
+	margin-left: 0.25em;
+	/*  background-image: -webkit-gradient(linear, left top, right top, from(rgb(239, 235, 230)), color-stop(0.05, rgb(250, 246, 240))); */
+}
+
+div.content {
+	padding: 0.5em;
+	overflow: hidden;
+	font-family: Georgia, Serif;
+	text-align: justify;
+	text-justify: newspaper;
+}
+
+div.content pre {
+	line-height: 100%;
+}
+
+div.content * {
+	line-height: 150%;
+	font-size: 1em;
+}
+
+div.header {
+	font-size: 80%;
+	vertical-align: middle;
+	position: relative;
+	margin-top: 1em;
+	height: 1em;
+}
+
+div.header h1 {
+	font-size: 120%;
+	font-weight: normal;
+	font-style: italic;
+	font-variant: small-caps;
+	text-transform: lowercase;
+	display: inline;
+}
+
+div.header span.pagenum {
+	display: inline;
+}
+
+div.header span.discoverable a {
+	text-decoration: none;
+	color: #aaaaaa;
+}
+
+div.header span.discoverable {
+	display: none;
+}
+
+div.right.header {
+	text-align: right;
+	right: 0;
+}
+
+div.right.header span.pagenum {
+	margin-right: 0.75em;
+}
+
+div.left.header span.pagenum {
+	margin-left: 0.75em;
+}
+
+div.page:hover span.discoverable,div.page:hover span.discoverable a {
+	display: block;
+	position: absolute;
+	font-size: 400%;
+	top: 100px;
+	background-color: rgba(0, 0, 0, 0.5);
+	line-height: 75%;
+	padding-top: 50px;
+	border-radius: 20px;
+	-webkit-border-radius: 20px;
+}
+
+div.page:hover div.left span.discoverable,div.page:hover div.left span.discoverable a
+	{
+	left: 28px;
+}
+
+div.page:hover div.right span.discoverable,div.page:hover div.right span.discoverable a
+	{
+	right: 31px;
+}
+
+div.page:hover span.discoverable a:hover {
+	color: #000000;
+}
+
+span.discoverable {
+	float: right;
+}
+
+div.footer {
+	display: none;
+}
+
+div.footer {
+	font-size: 80%;
+	vertical-align: middle;
+	position: relative;
+	bottom: 0;
+}
+
+div.footer h1 {
+	font-size: 120%;
+	font-weight: normal;
+	display: inline;
+	font-variant: small-caps;
+	text-transform: lowercase;
+}
+
+div.left {
+	margin-right: 1em;
+	margin-left: 1.5em;
+	padding: 0.5em;
+}
+
+div.left.content {
+	padding-top: 0.5em;
+}
+
+div.left.footer {
+	text-align: left;
+	left: 0;
+}
+
+div.right {
+	margin-left: 1em;
+	margin-right: 1.5em;
+	padding: 0.5em;
+}
+
+div.right.content {
+	padding-top: 0.5em;
+}
+
+div.right.footer {
+	text-align: right;
+	right: 0px;
+}
+
+div#selector {
+	position: absolute;
+	top: 150px;
+	width: 100%;
+}
+
+#selectorContainer {
+	width: 960px;
+	margin: 0 auto;
+}
+
+div#selector .selection {
+	float: left;
+	margin-right: 5px;
+}
+
+div#selector .selection img {
+	width: 180px;
+}
+
+div#spinner {
+	background-color: rgba(55, 46, 74, 0.8);
+	position: absolute;
+	width: 100px;
+	height: 100px;
+	top: 100px;
+	left: 50%;
+	margin-left: -50px;
+	display: none;
+	border-radius: 20px;
+	-webkit-border-radius: 20px;
+}
+
+div#spinner img {
+	margin: 34px;
+}
+
+div#contents {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	background-color: #eeeeff;
+	padding: 20px;
+	z-index: 100000;
+}
+
+div#contents a {
+	display: block;
+}
