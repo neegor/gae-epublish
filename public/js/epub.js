@@ -21,9 +21,25 @@ var ePub = new function () {
   };
 
   this.Book = function (archive) {
+	var archiveRoot = "";
+	if (!archive.files['META-INF/container.xml']) {
+		for (var i in archive.files) {
+			archiveRoot = i;
+			break;
+		}
+	}
 
-    var ocf = new ePub.OCF(archive.files['META-INF/container.xml'].content());
-    var opf = new ePub.OPF(ocf.rootFile, archive);
+    var ocf = new ePub.OCF(archive.files[archiveRoot + 'META-INF/container.xml'].content());
+
+var opf = null;
+if (!ocf.rootFile) {
+	for (var i in ocf.alternateFormats) {
+		opf = new ePub.OPF(archiveRoot + ocf.alternateFormats[i], archive);
+		break;
+	}
+} else {
+	opf = new ePub.OPF(archiveRoot + ocf.rootFile, archive);
+}
 
     this.getFile = opf.getFileByName;
 
@@ -66,6 +82,7 @@ var ePub = new function () {
     var manifest = opf.querySelector('manifest');
 
     this.getFileByName = function (fileName) {
+      if ((n = fileName.indexOf('#')) >= 0) fileName = fileName.substr(0, n);
       var fullPath = [opfPath, fileName].join("/");
 
       return archive.files[fullPath];
@@ -118,7 +135,8 @@ var ePub = new function () {
         content = function () { return "" };
       } else {
         content = function () {
-          return decodeURIComponent( escape(file.content()) )
+          //return decodeURIComponent( escape(file.content()) )
+		return file.content();
         };
       }
 

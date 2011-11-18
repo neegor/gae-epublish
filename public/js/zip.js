@@ -208,6 +208,10 @@ var Zip = {
           default:
             throw new Error("Unsupported compression method.");
         }
+	
+	if (content.substr(0, 3) == '\xEF\xBB\xBF') content = content.substr(3);
+	
+	try { content = decodeURIComponent(escape(content)); } catch (e) {}
 
         return content;
       };

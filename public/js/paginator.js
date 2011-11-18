@@ -181,11 +181,11 @@ var Paginator = function (fromNode, toNode, styleContent) {
     this.textNode = function (element, c) {
 
       var rawHyphenatedText;
-      try {
-        rawHyphenatedText = Hyphenator.hyphenate(decodeURIComponent(escape(element.textContent)), 'en');
-      } catch (e) {
+      //try {
+      //  rawHyphenatedText = Hyphenator.hyphenate(decodeURIComponent(escape(element.textContent)), 'en');
+      //} catch (e) {
         rawHyphenatedText = Hyphenator.hyphenate(element.textContent, 'en');
-      }
+      //}
       var newTextNode = currentNode.ownerDocument.createTextNode(rawHyphenatedText);
 
       currentNode.appendChild(newTextNode);
@@ -194,7 +194,9 @@ var Paginator = function (fromNode, toNode, styleContent) {
         // We're still safe. Call the callback! Continue! Do not dawdle!
         var tmpDelay = delay;
         delay = 0;
-        setTimeout(function continueFast () { c(); }, tmpDelay);
+        setTimeout(function continueFast () {
+        	c();
+        }, tmpDelay);
         return;
       }
       // That didn't work. Try the slow approach.
@@ -210,11 +212,11 @@ var Paginator = function (fromNode, toNode, styleContent) {
           space = '';
 
       var incomingText;
-      try {
-        incomingText = Hyphenator.hyphenate(decodeURIComponent(escape(element.textContent)), 'en');
-      } catch (e) {
+      //try {
+      //  incomingText = Hyphenator.hyphenate(decodeURIComponent(escape(element.textContent)), 'en');
+      //} catch (e) {
         incomingText = Hyphenator.hyphenate(element.textContent, 'en');
-      }
+      //}
 
       var l = incomingText.length;
 
@@ -269,7 +271,8 @@ var Paginator = function (fromNode, toNode, styleContent) {
 
       var textChunks;
       try {
-        textChunks = Hyphenator.hyphenate(decodeURIComponent(escape(element.textContent)), 'en').split(/[\r\n ]/);
+        //textChunks = Hyphenator.hyphenate(decodeURIComponent(escape(element.textContent)), 'en').split(/[\r\n ]/);
+        textChunks = Hyphenator.hyphenate(element.textContent, 'en').split(/[\r\n ]/);
       } catch (e) {
         textChunks = element.textContent.split(/[\r\n ]/);
       }
