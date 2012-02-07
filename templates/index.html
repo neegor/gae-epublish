@@ -1,290 +1,229 @@
 <html>
-<head>
+	<head>
+		<link rel="stylesheet" type="text/css" media="screen" href="/public/css/reset.css" />
+		<link rel="stylesheet" type="text/css" media="screen" href="/public/css/book.css" />
+		<link rel="stylesheet" type="text/css" media="screen and (max-device-width: 1024px) and (orientation:portrait)" href="/public/css/portrait.css" />
+		<link rel="stylesheet" type="text/css" media="screen and (max-device-width: 1024px) and (orientation: landscape)" href="/public/css/landscape.css" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="viewport" content="width=930, user-scalable=no" />
+		<script type="text/javascript" src="/public/js/inflate.js"></script>
+		<script type="text/javascript" src="/public/js/sax.js"></script>
+		<script type="text/javascript" src="/public/js/zip.js"></script>
+		<script type="text/javascript" src="/public/js/epub.js"></script>
+		<script type="text/javascript" src="/public/js/base64.js"></script>
+		<script type="text/javascript" src="/public/js/imageSize.js"></script>
+		<script type="text/javascript" src="/public/js/paginator.js"></script>
+		<script type="text/javascript" src="/public/js/section.js"></script>
+		<script type="text/javascript" src="/public/js/pageHandler.js"></script>
+		<script src="/public/js/Hyphenator.js" type="text/javascript"></script>
+		<script src="/public/js/patterns/en.js" type="text/javascript"></script>
+		<script src="/public/js/swipe.js"></script>
+		<script src="/public/js/pageRenderer.js"></script>
+		<script type="text/javascript">
+			function loadTheBook() {
+				var epuburl = document.getElementById('epuburl').value;
+				loadBook(epuburl);
+			}
 
-<link rel="stylesheet" type="text/css" media="screen" href="/public/css/book.css" />
-<link rel="stylesheet" type="text/css" media="screen and (max-device-width: 1024px) and (orientation:portrait)" href="/public/css/portrait.css" />
-<link rel="stylesheet" type="text/css" media="screen and (max-device-width: 1024px) and (orientation: landscape)" href="/public/css/landscape.css" />
+			function setPageSize(pageRatio) {
 
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="viewport" content="width=930, user-scalable=no" />
+				if(!pageRatio)
+					pageRatio = Math.sqrt(Math.E);
 
-<script type="text/javascript" src="/public/js/inflate.js"></script>
-<script type="text/javascript" src="/public/js/sax.js"></script>
-<script type="text/javascript" src="/public/js/zip.js"></script>
-<script type="text/javascript" src="/public/js/epub.js"></script>
-<script type="text/javascript" src="/public/js/base64.js"></script>
-<script type="text/javascript" src="/public/js/imageSize.js"></script>
-<script type="text/javascript" src="/public/js/paginator.js"></script>
-<script type="text/javascript" src="/public/js/section.js"></script>
-<script type="text/javascript" src="/public/js/pageHandler.js"></script>
+				var width = (window.innerWidth - 20);
+				var height = window.innerHeight - 20;
 
-<script src="/public/js/Hyphenator.js" type="text/javascript"></script>
-<script src="/public/js/patterns/en.js" type="text/javascript"></script>
+				var pageHeight = height, pageWidth = width / 2;
 
-<script src="/public/js/swipe.js"></script>
-<script src="/public/js/pageRenderer.js"></script>
+				console.log("Width/Height: " + width + "/" + height + ", pageWidth/pageHeight: " + pageWidth + "/" + pageHeight);
 
-<script type="text/javascript">
-	function loadTheBook() {
-		var epuburl = document.getElementById('epuburl').value;
-		loadBook(epuburl);
-	}
+				var container = document.getElementById('container');
+				container.style.width = pageWidth * 2;
+				container.style.height = pageHeight;
 
-	function setPageSize(pageRatio) {
+				var pages = document.getElementsByClassName('page');
 
-		if (!pageRatio)
-			pageRatio = Math.sqrt(Math.E);
+				for(var i = 0, l = pages.length; i < l; i++) {
+					pages[i].style.width = pageWidth - Math.log(22) * 8;
+					pages[i].style.height = pageHeight - Math.log(22) * 10;
+					pages[i].style.marginTop = '0px';
 
-		var width = (window.innerWidth - 20) / 2;
-		var height = window.innerHeight - 20;
+					var header = document.getElementsByClassName('header')[0];
+					var headerHeight = 24 * 2;
+					// hard coded for now, until we properly size the header...
 
-		var pageHeight = height, pageWidth = width;
+					var contents = document.getElementsByClassName('content');
+					contents[0].style.height = pageHeight - (Math.log(22) * 10) - headerHeight;
+				}
 
-		if (height / pageRatio > width) {
-			// We'll need to constrain the height.
-			pageHeight = width * pageRatio;
-			/*        } else if (height / pageRatio > width * 1.5) {
-			 // We have way more height than width. Go to a one-page view.
-			 pageHeight = width * pageRatio; */
-		} else {
-			// Constrain the width, 2-page.
-			pageWidth = height / pageRatio;
-		}
+				// This needs tweaking, because it should actually be done once we know
+				// which font will be used as the body font for the book. This is a reasonable
+				// approximation, though, and will do for now.
 
-		console.log("Width/Height: " + width + "/" + height
-				+ ", pageWidth/pageHeight: " + pageWidth + "/" + pageHeight);
+				var sizerElement = document.createElement('p');
 
-		var container = document.getElementById('container');
-		container.style.width = pageWidth * 2;
-		container.style.height = pageHeight;
+				// Rough statistical relevancy of letters [in english]. This will give us a more-accurate approximation of average line length.
+				var letters = "aaaaaaaabbcccddddeeeeeeeeeeeeeffgghhhhhhiiiiiiijkllllmmnnnnnnnooooooooppqrrrrrrsssssstttttttttuuuvwxyyz";
+				sizerElement.textContent = letters;
+				sizerElement.style.left = '0';
+				sizerElement.style.top = '0';
+				sizerElement.style.position = 'absolute';
+				sizerElement.style.margin = '0';
+				sizerElement.style.padding = '0';
+				document.body.appendChild(sizerElement);
 
-		var background = document.getElementById('backgroundDiv');
-		background.style.width = pageWidth * 2;
-		background.style.height = pageHeight;
+				// Our ideal line width is 66 characters.
+				console.log('offsetwidth: ' + sizerElement.offsetWidth);
+				console.log('letters.length: ' + letters.length);
+				var idealLineWidth = (sizerElement.offsetWidth / letters.length) * 66;
+				var measuredFontSize = document.defaultView.getComputedStyle(sizerElement, null).getPropertyValue('font-size').toString().replace('px', '');
+				console.log('measured font size: ' + measuredFontSize);
 
-		var canvas = document.getElementById('background');
-		canvas.width = pageWidth * 2;
-		canvas.height = pageHeight;
+				// now that we have that, remove the sizer element.
+				document.body.removeChild(sizerElement);
 
-		var pages = document.getElementsByClassName('page');
+				var pageSize = pageWidth - Math.log(22) * 8
+				console.log('content width: ' + pageSize);
 
-		for ( var i = 0, l = pages.length; i < l; i++) {
-			pages[i].style.width = pageWidth - Math.log(22) * 8;
-			pages[i].style.height = pageHeight - Math.log(22) * 10;
-			pages[i].style.marginTop = '0px';
+				// multiply the actual fontSize by our sizing ratio
+				var pixelFontSize = (measuredFontSize * pageSize / idealLineWidth) + 'px';
+				console.log('pixelFontSize: ' + pixelFontSize);
 
-			var header = document.getElementsByClassName('header')[0];
-			var headerHeight = 24 * 2; // hard coded for now, until we properly size the header...
+				// and apply that to the document body. All other sizes should be in ems.
+				document.body.style.fontSize = pixelFontSize;
+			}
 
-			var contents = document.getElementsByClassName('content');
-			contents[0].style.height = pageHeight - (Math.log(22) * 10)
-					- headerHeight;
-		}
+			var loadBook = function(epub) {
 
-		// This needs tweaking, because it should actually be done once we know
-		// which font will be used as the body font for the book. This is a reasonable
-		// approximation, though, and will do for now.
+				setPageSize();
 
-		var sizerElement = document.createElement('p');
+				selector.style.display = 'none';
+				container.style.display = 'block';
 
-		// Rough statistical relevancy of letters [in english]. This will give us a more-accurate approximation of average line length.
-		var letters = "aaaaaaaabbcccddddeeeeeeeeeeeeeffgghhhhhhiiiiiiijkllllmmnnnnnnnooooooooppqrrrrrrsssssstttttttttuuuvwxyyz";
-		sizerElement.textContent = letters;
-		sizerElement.style.left = '0';
-		sizerElement.style.top = '0';
-		sizerElement.style.position = 'absolute';
-		sizerElement.style.margin = '0';
-		sizerElement.style.padding = '0';
-		document.body.appendChild(sizerElement);
+				var epubUrl;
+				if(epub.substr(0, 4) == 'http') {
+					epubUrl = epub;
+				} else {
+					epubUrl = "/public/epubs/" + epub;
+				}
 
-		// Our ideal line width is 66 characters.
-		console.log('offsetwidth: ' + sizerElement.offsetWidth);
-		console.log('letters.length: ' + letters.length);
-		var idealLineWidth = (sizerElement.offsetWidth / letters.length) * 66;
-		var measuredFontSize = document.defaultView.getComputedStyle(
-				sizerElement, null).getPropertyValue('font-size').toString()
-				.replace('px', '');
-		console.log('measured font size: ' + measuredFontSize);
+				ePub.open(epubUrl, function(book) {
 
-		// now that we have that, remove the sizer element.
-		document.body.removeChild(sizerElement);
+					var te = document.getElementById('book_title');
+					te.textContent = book.title;
 
-		var pageSize = pageWidth - Math.log(22) * 8
-		console.log('content width: ' + pageSize);
+					var ae = document.getElementById('author_heading');
+					ae.textContent = book.author;
 
-		// multiply the actual fontSize by our sizing ratio
-		var pixelFontSize = (measuredFontSize * pageSize / idealLineWidth)
-				+ 'px';
-		console.log('pixelFontSize: ' + pixelFontSize);
+					var lc = document.getElementsByClassName('left content')[0], rc = document.getElementsByClassName('right content')[0], ln = document
+					.getElementsByClassName('left_pagenum')[0], rn = document
+					.getElementsByClassName('right_pagenum')[0];
 
-		// and apply that to the document body. All other sizes should be in ems.
-		document.body.style.fontSize = pixelFontSize;
-	}
+					var pages;
+					if(window.orientation == 0 || window.orientation == 180) {
+						pages = [lc];
+					} else {
+						pages = [lc, rc];
+					}
+					pageHandler = new PageHandler(book, pages, [ln, rn]);
 
-	var loadBook = function(epub) {
+					var contents = document.getElementById('contents');
+					for(var i = 0, l = book.toc.length; i < l; i++) {
 
-		setPageSize();
+						// Sometimes navpoints aren't all covered, or they are done so in weird ways.
+						// try to be liberal about things.
+						if(book.toc[i] === undefined)
+							continue;
 
-		selector.style.display = 'none';
-		container.style.display = 'block';
-
-		var epubUrl;
-		if (epub.substr(0, 4) == 'http') {
-			epubUrl = epub;
-		} else {
-			epubUrl = "public/epubs/" + epub;
-		}
-
-		ePub
-				.open(
-						epubUrl,
-						function(book) {
-
-							var te = document.getElementById('book_title');
-							te.textContent = book.title;
-
-							var ae = document.getElementById('author_heading');
-							ae.textContent = book.author;
-
-							var lc = document.getElementById('leftcontent'), rc = document
-									.getElementById('rightcontent'), ln = document
-									.getElementsByClassName('left pagenum')[0], rn = document
-									.getElementsByClassName('right pagenum')[0];
-
-							var pages;
-							if (window.orientation == 0
-									|| window.orientation == 180) {
-								pages = [ lc ];
-							} else {
-								pages = [ lc, rc ];
-							}
-
-							pageHandler = new PageHandler(book, pages,
-									[ ln, rn ]);
-
-							var contents = document.getElementById('contents');
-							for ( var i = 0, l = book.toc.length; i < l; i++) {
-
-								// Sometimes navpoints aren't all covered, or they are done so in weird ways.
-								// try to be liberal about things.
-								if (book.toc[i] === undefined)
-									continue;
-
-								var chapter = document.createElement('a');
-								var secName = book.toc[i].fileName;
-								chapter.setAttribute('href', '#section='
-										+ secName);
-								chapter.textContent = book.toc[i].title;
-								chapter.onclick = function(secName) {
-									return function() {
-										pageHandler.goToSection(secName);
-										pageHandler.display();
-										contents.style.display = 'none';
-									}
-								}(secName);
-								contents.appendChild(chapter);
-							}
-
-							pageHandler.display();
-
-							swipe(null, pageHandler);
-
-							function handleArrowKeys(evt) {
-								evt = (evt) ? evt : ((window.event) ? event
-										: null);
-								if (evt) {
-									switch (evt.keyCode) {
-									case 37:
-										pageHandler.prevPage();
-										break;
-									case 39:
-										pageHandler.nextPage();
-										break;
-									case 67:
-										document.getElementById('contents').style.display = 'block';
-										break;
-									}
-								}
-							}
-
-							document.onkeyup = handleArrowKeys;
-
-							// Set up an orientation handler
-							window.onorientationchange = function() {
-								if (window.orientation == 0
-										|| window.orientation == 180) {
-									pageHandler.setPages([ lc ]);
-								} else {
-									pageHandler.setPages([ lc, rc ]);
-								}
+						var chapter = document.createElement('a');
+						var secName = book.toc[i].fileName;
+						chapter.setAttribute('href', '#section=' + secName);
+						chapter.textContent = book.toc[i].title;
+						chapter.onclick = function(secName) {
+							return function() {
+								pageHandler.goToSection(secName);
 								pageHandler.display();
+								contents.style.display = 'none';
 							}
+						}(secName);
+						contents.appendChild(chapter);
+					}
 
-						});
-	}
-</script>
+					pageHandler.display();
 
-</head>
+					swipe(null, pageHandler);
 
-<body>
-	<div id="spinner">
-		<img src="/public/img/loader.gif" alt="Loading" />
-	</div>
+					function handleArrowKeys(evt) {
+						evt = (evt) ? evt : ((window.event) ? event : null);
+						if(evt) {
+							switch (evt.keyCode) {
+								case 37:
+									pageHandler.prevPage();
+									break;
+								case 39:
+									pageHandler.nextPage();
+									break;
+								case 67:
+									document.getElementById('contents').style.display = 'block';
+									break;
+							}
+						}
+					}
 
-	<div id="contents" style="display: none;"></div>
-	
-	<div id="selector">
+
+					document.onkeyup = handleArrowKeys;
+
+					// Set up an orientation handler
+					window.onorientationchange = function() {
+						if(window.orientation == 0 || window.orientation == 180) {
+							pageHandler.setPages([lc]);
+						} else {
+							pageHandler.setPages([lc, rc]);
+						}
+						pageHandler.display();
+					}
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<div id="spinner">
+			<img src="/public/img/loader.gif" alt="Loading" />
+		</div>
+		<div id="contents" style="display: none;"></div>
+		<div id="selector">
+			<div id="selectorContainer">
+				<div class="selection" onclick="loadBook('pg5200.epub');">
+					<img src="/public/covers/pg4300.jpg" alt="Metamorphosis" />
+				</div>
+				<div class="selection" onclick="loadBook('warofworlds.epub');">
+					<img src="/public/covers/pg5200.jpg" alt="The War of the Worlds" />
+				</div>
+				<div class="selection" onclick="loadBook('flatland.epub');">
+					<img src="/public/covers/pg1155.jpg" alt="Flatland" />
+				</div>
+				<div class="selection" onclick="loadBook('249891.epub');">
+					<img src="/public/covers/pg100.jpg" alt="Gulliver's Travels" />
+				</div>
+				<div class="selection" onclick="loadBook('gulliverstravels.epub');">
+					<img src="/public/covers/pg84.jpg" alt="Gulliver's Travels" />
+				</div>
+			</div>
+		</div>	
 		
-		<div id="selectorContainer">
-			<div class="selection" onclick="loadBook('pg5200.epub');">
-				<img src="/public/covers/pg4300.jpg" alt="Metamorphosis" />
+		<div id="container">
+			<div class="left">
+				<div class="header left">
+					<span class="left_pagenum"></span> &#183; <h1 id="book_title"></h1>
+				</div>
+				<div class="content left"></div>				
 			</div>
-			<div class="selection" onclick="loadBook('warofworlds.epub');">
-				<img src="/public/covers/pg5200.jpg" alt="The War of the Worlds" /> 
+			<div class="right">
+				<div class="header right">
+					<h1 id="author_heading"></h1> &#183; <span class="right_pagenum"></span>
+				</div>
+				<div class="content right"></div>				
 			</div>
-			<div class="selection" onclick="loadBook('flatland.epub');">
-				<img src="/public/covers/pg1155.jpg" alt="Flatland" /> 
-			</div>
-			<div class="selection" onclick="loadBook('249891.epub');">
-				<img src="/public/covers/pg100.jpg" alt="Gulliver's Travels" /> 
-			</div>
-			<div class="selection" onclick="loadBook('gulliverstravels.epub');">
-				<img src="/public/covers/pg84.jpg" alt="Gulliver's Travels" /> 
-			</div>
-			
-		</div>
-		
-	</div> 
-	
-	<div id="backgroundDiv">
-		<canvas id="background" width="952" height="686"></canvas>
-	</div>
-
-	<div id="container">
-		<div id="leftpage" class="page">
-			<div class="left header">
-				<span class="left pagenum"></span> &#183;
-				<h1 id="book_title"></h1>
-			</div>
-			<div id="leftcontent" class="left content"></div>
-			<div class="left footer">
-				<span class="left pagenum"></span> &#183;
-				<h1 id="chapter_heading"></h1>
-			</div>
-		</div>
-
-		<div id="rightpage" class="page landscape">
-			<div class="right header">
-				<h1 id="author_heading"></h1>
-				&#183; <span class="right pagenum"></span>
-			</div>
-			<div id="rightcontent" class="right content"></div>
-			<div class="right footer">
-				<h1></h1>
-				&#183; <span class="right pagenum"></span>
-			</div>
-		</div>
-	</div>
-
-</body>
+		</div>		
+	</body>
 </html>

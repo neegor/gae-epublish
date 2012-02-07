@@ -92,7 +92,7 @@ var PageHandler = function (book, displayElements, pageNumbers, chapterName) {
     if (!currPage) currPage = Math.min(currSection, totalPageCount - 1);
     if (currPage >= totalPageCount) currPage = currPage - 1;
 
-    drawPct(currPage / totalPageCount);
+    // drawPct(currPage / totalPageCount);
   };
 
   this.pageDisplayer = function (pageIdx) {

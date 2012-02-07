@@ -75,24 +75,41 @@ div.content * {
 	font-size: 1em;
 }
 
+.left {
+	float: left;
+	width: 42%;
+	height: 100%;
+}
+
+.right {
+	float: right;
+	width: 42%;
+	height: 100%;
+}
+
+.content.left, .content.right {
+	width: 100%;
+}
+
 div.header {
 	font-size: 80%;
 	vertical-align: middle;
 	position: relative;
 	margin-top: 1em;
-	height: 1em;
+	height: 2.5em;
 }
 
 div.header h1 {
 	font-size: 120%;
-	font-weight: normal;
-	font-style: italic;
+	font-weight: bolder;
+	/* font-style: italic; */
 	font-variant: small-caps;
 	text-transform: lowercase;
 	display: inline;
 }
 
-div.header span.pagenum {
+div.header span.left_pagenum, div.header span.right_pagenum {
+	font-weight: bolder;
 	display: inline;
 }
 
@@ -242,6 +259,7 @@ div#contents {
 	background-color: #eeeeff;
 	padding: 20px;
 	z-index: 100000;
+	font-size: 50%;
 }
 
 div#contents a {
