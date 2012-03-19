@@ -1,21 +1,61 @@
-var ePub = new function () {
+isIE = (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent));  
 
+var ePub = new function () {
+  var client = null, activeXids = ['MSXML2.XMLHTTP.3.0', 'MSXML2.XMLHTTP', 'Microsoft.XMLHTTP'];
   var parser = new DOMParser();
+  
+  var convertResponseBodyToText = function (binary) { 
+        var byteMapping = {}; 
+        for ( var i = 0; i < 256; i++ ) { 
+            for ( var j = 0; j < 256; j++ ) { 
+                byteMapping[ String.fromCharCode( i + j * 256 ) ] = 
+                    String.fromCharCode(i) + String.fromCharCode(j); 
+            } 
+        }        
+        var rawBytes = IEBinaryToArray_ByteStr(binary); 
+        var lastChr = IEBinaryToArray_ByteStr_Last(binary); 
+        return rawBytes.replace(/[\s\S]/g, function( match ) { return byteMapping[match]; }) + lastChr; 
+    };
 
   this.open = function (uri, callback) {
-    var client = new XMLHttpRequest();
+  	if (typeof(XMLHttpRequest) === "function" || typeof(XMLHttpRequest) === "object") {
+  		client =  new XMLHttpRequest();
+  	} else {
+		for (i = 0; i < activeXids.length; i += 1) {
+			try {
+				client = new ActiveXObject(activeXids[i]);
+				break;
+			} catch (e) {
+				alert(e);
+			}
+		}
+	}
 
     client.onreadystatechange = function () {
       if (client.readyState == 4 && client.status == 200) {
-        var archive = new Zip.Archive(client.responseText);
-        callback(new ePub.Book(archive));
+      	if(isIE) {
+      		var fileContents = convertResponseBodyToText(client.responseBody);
+      		fileSize = fileContents.length - 1;
+      		
+      		if(fileSize < 0) throwException(_exception.FileLoadFailed);
+      		readByteAt = function(i){ 
+                    return fileContents.charCodeAt(i) & 0xff; 
+            };
+            
+            var archive = new Zip.Archive(fileContents);
+        	callback(new ePub.Book(archive)); 
+      	} else {
+        	var archive = new Zip.Archive(client.responseText);
+        	callback(new ePub.Book(archive));
+       }
       } else if (client.readyState == 4 && client.status < 400 && client.status > 299) {
         alert('I need to look elsewhere for the book, but I don\'t know how!');
       } else if (client.readyState == 4) {
         alert('There was an error reading the book! I need CORS support to read books from other domains! (result code was ' + client.readyState + '/' + client.status);
       }
     };
-    client.overrideMimeType('text/plain; charset=x-user-defined');
+        
+    if(!isIE) client.overrideMimeType('text/plain; charset=x-user-defined');
     client.open("GET", uri);
     client.send(null);
   };
@@ -89,8 +129,8 @@ if (!ocf.rootFile) {
     };
 
     this.getFileById = function (id) {
-      var fileName = manifest.querySelector("[id='" + id + "']").getAttribute('href');
-      return this.getFileByName(fileName);
+      var fileName = Sizzle("[id='" + id + "']", manifest).shift();
+      return this.getFileByName(fileName.getAttribute('href'));
     }
 
     // Build the contents file. Needs some work.
@@ -135,7 +175,6 @@ if (!ocf.rootFile) {
         content = function () { return "" };
       } else {
         content = function () {
-          //return decodeURIComponent( escape(file.content()) )
 		return file.content();
         };
       }

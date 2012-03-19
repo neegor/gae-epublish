@@ -191,10 +191,11 @@ var PageHandler = function (book, displayElements, pageNumbers, chapterName) {
         var contentDoc = parser.parseFromString(contentChunk.content(), 'application/xml'),
             contentHeader = contentDoc.getElementsByTagName('head')[0],
             contentContainer = contentDoc.getElementsByTagName('body')[0];
-
+            
         var contentCollector = getNewCollector();
 
         var styleContent;
+        /*
         for (var i = 0, l = contentHeader.children.length; i < l; i++) {
           var elem = contentHeader.children[i];
           
@@ -216,6 +217,7 @@ var PageHandler = function (book, displayElements, pageNumbers, chapterName) {
           var ssheet = document.getElementById('rePublishStyle');
           ssheet.textContent = styleContent;
         }
+        */
 
         var paginator = new Paginator(contentContainer, contentCollector, styleContent);
 
@@ -229,31 +231,31 @@ var PageHandler = function (book, displayElements, pageNumbers, chapterName) {
         });
 
         paginator.addCallback('image', function (image) {
-          var img;
-          if (image.getAttribute('src')) {
-            var img = book.getFile(image.getAttribute('src'));
-          } else {
-            var img = book.getFile(image.getAttribute('xlink:href'));
-          }
-
-          if (!img) return;
-          
-          var imgContent = img.content();
-          var b64imgContent = Base64.encode(imgContent);
-
-          try {
-            var sz = getImageSize(imgContent);
-            if (sz) {
-              image.width = sz.width;
-              image.height = sz.height;
-            }
-          } catch (e) {
-            // console.log('error finding image size for ' + image.getAttribute('src'));
-          }
-
-          var imgType = img.name.substr(img.name.lastIndexOf('.') + 1, img.name.length);
-          var dataUri = "data:image/" + imgType + ";base64," + b64imgContent;
-          image.setAttribute('src', dataUri);
+          // var img;
+          // if (image.getAttribute('src')) {
+            // var img = book.getFile(image.getAttribute('src'));
+          // } else {
+            // var img = book.getFile(image.getAttribute('xlink:href'));
+          // }
+// 
+          // if (!img) return;
+//           
+          // var imgContent = img.content();
+          // var b64imgContent = Base64.encode(imgContent);
+// 
+          // try {
+            // var sz = getImageSize(imgContent);
+            // if (sz) {
+              // image.width = sz.width;
+              // image.height = sz.height;
+            // }
+          // } catch (e) {
+            // // console.log('error finding image size for ' + image.getAttribute('src'));
+          // }
+// 
+          // var imgType = img.name.substr(img.name.lastIndexOf('.') + 1, img.name.length);
+          // var dataUri = "data:image/" + imgType + ";base64," + b64imgContent;
+          // image.setAttribute('src', dataUri);
         });
 
         paginator.paginate();
@@ -289,7 +291,7 @@ var startTime = new Date();
         // Load section n, and schedule the next section to load in 100ms.
         sections[n].loadCallback( function (loaded) {
 var finishTime = new Date();
-console.log("Loading section " + n + " took " + (finishTime - startTime) + "ms");
+//console.log("Loading section " + n + " took " + (finishTime - startTime) + "ms");
 accum += finishTime - startTime;
 naccum++;
           if (loaded) {
@@ -297,7 +299,7 @@ naccum++;
           }
         });
       } else {
-        console.log('average: ' + (accum / naccum));
+        //console.log('average: ' + (accum / naccum));
       }
     }
 
