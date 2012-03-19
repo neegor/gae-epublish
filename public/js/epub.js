@@ -123,7 +123,11 @@ if (!ocf.rootFile) {
 
     this.getFileByName = function (fileName) {
       if ((n = fileName.indexOf('#')) >= 0) fileName = fileName.substr(0, n);
-      var fullPath = [opfPath, fileName].join("/");
+      var fullPath;
+      if(opfPath.length > 0 ) fullPath = [opfPath, fileName].join("/");
+      else fullPath = fileName;
+      
+      /*var fullPath = [opfPath, fileName].join("/");*/
 
       return archive.files[fullPath];
     };
