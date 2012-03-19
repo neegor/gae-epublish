@@ -19,7 +19,10 @@ document._importNode = function(node, allChildren) {
 			if (node.attributes && node.attributes.length > 0) {
 				var il = node.attributes.length;
 				for (var i = 0; i < il;) {
-					if(node.attributes[i].nodeName.toLowerCase() != 'src')
+					var attr = node.attributes[i].nodeName.toLowerCase();
+					 if(attr != 'src' && attr != 'xlink:href')
+					
+					/*if(node.attributes[i].nodeName.toLowerCase() != 'src')*/
 						newNode.setAttribute(node.attributes[i].nodeName, node.getAttribute(node.attributes[i].nodeName));
 					i++;
 				}
